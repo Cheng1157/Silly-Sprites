@@ -1,74 +1,155 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Silly Sprites</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f9;
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            text-align: center;
+            background-color: #222;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
         }
         #stage {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            background: #333;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            cursor: pointer;
+            user-select: none;
         }
         .screen {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 450px;
         }
         .hidden {
-            display: none;
+            display: none !important;
         }
         .eyebrow {
-            font-size: 0.9rem;
-            color: #666;
+            font-size: 0.85rem;
+            color: #aaa;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+        }
+        .card-image-container {
+            width: 100%;
+            height: 320px;
+            background-color: #444;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 16px 0;
+            border: 2px solid #555;
+        }
+        .card-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .tap-prompt {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 12px;
         }
     </style>
 </head>
 <body>
 
-    <div id="stage">
+    <div id="stage" onclick="nextCard()">
+        <!-- INTRO SCREEN -->
         <section id="intro" class="screen">
             <p class="eyebrow">A digital card game</p>
-            <h1>Welcome to Silly Sprites!</h1>
+            <h1>Silly Sprites</h1>
+            <p class="tap-prompt">Tap anywhere to start playing</p>
         </section>
         
+        <!-- CARD SCREEN -->
         <section id="card" class="screen hidden">
-            <div class="top">
-                <p class="num"><span id="num">01</span></p>
+            <p class="eyebrow">Card <span id="num">01</span> / <span id="total">12</span></p>
+            <div class="card-image-container">
+                <img id="spriteImg" src="" alt="Silly Sprite Creature" />
             </div>
+            <p class="tap-prompt">Tap screen for next card</p>
         </section>
         
+        <!-- END SCREEN -->
         <section id="end" class="screen hidden">
-            <p class="eyebrow">Game over</p>
-            <h1>That's all 60 cards!</h1>
+            <p class="eyebrow">Game Over</p>
+            <h1>You seen all sprites!</h1>
+            <p class="tap-prompt">Tap to restart</p>
         </section>
     </div>
 
     <script>
-        var IMGS = {
-            "c01": "creature1.jpeg",
-            "c02": "creature2.jpeg",
-            "c03": "creature3.jpeg",
-            "c04": "creature4.jpeg",
-            "c05": "creature5.jpeg",
-            "c06": "creature6.jpeg",
-            "c07": "creature7.jpeg",
-            "c08": "creature8.jpeg",
-            "c09": "creature9.jpeg",
-            "c10": "creature10.jpeg",
-            "c11": "creature11.jpeg",
-            "c12": "creature12.jpeg"
-        };
+        var IMGS = [
+            "creature1.jpeg",
+            "creature2.jpeg",
+            "creature3.jpeg",
+            "creature4.jpeg",
+            "creature5.jpeg",
+            "creature6.jpeg",
+            "creature7.jpeg",
+            "creature8.jpeg",
+            "creature9.jpeg",
+            "creature10.jpeg",
+            "creature11.jpeg",
+            "creature12.jpeg"
+        ];
+
+        var currentIndex = -1;
+        var introEl = document.getElementById('intro');
+        var cardEl = document.getElementById('card');
+        var endEl = document.getElementById('end');
+        var spriteImg = document.getElementById('spriteImg');
+        var numEl = document.getElementById('num');
+        var totalEl = document.getElementById('total');
+
+        totalEl.textContent = IMGS.length;
+
+        function nextCard() {
+            currentIndex++;
+
+            if (currentIndex === 0) {
+                introEl.classList.add('hidden');
+                cardEl.classList.remove('hidden');
+                showCurrentCard();
+            } else if (currentIndex < IMGS.length) {
+                showCurrentCard();
+            } else {
+                cardEl.classList.add('hidden');
+                endEl.classList.remove('hidden');
+                currentIndex = -1; // Reset loop
+            }
+        }
+
+        function showCurrentCard() {
+            var formattedNum = (currentIndex + 1 < 10 ? '0' : '') + (currentIndex + 1);
+            numEl.textContent = formattedNum;
+            spriteImg.src = IMGS[currentIndex];
+        }
     </script>
 </body>
-</html>  
+</html>
